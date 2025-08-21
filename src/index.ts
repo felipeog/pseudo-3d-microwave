@@ -48,6 +48,7 @@ const state = {
 
   // gui
   isSpinning: true,
+  isReverse: false,
   stagedDoorRotation: 0.25,
   stagedZoom: 0.5,
   stagedDurationInMs: 10_000,
@@ -67,24 +68,15 @@ const state = {
 
     state.durationInMs = 10_000;
     state.isSpinning = true;
+    state.isReverse = false;
     state.stagedDoorRotation = 0.25;
     state.stagedZoom = 0.5;
     state.stagedDurationInMs = 10_000;
   },
 };
 
-gui
-  .add(state, "isSpinning")
-  .name("spin")
-  .listen()
-  .onChange(() => {
-    if (!state.isSpinning) return;
-
-    const angle = state.illustrationRotation.target.y;
-    const newMs = Date.now() - (angle / (2 * Math.PI)) * state.durationInMs;
-
-    state.lastStart = newMs;
-  });
+gui.add(state, "isSpinning").name("spin").listen().onChange(updateLastStart);
+gui.add(state, "isReverse").name("reverse").listen().onChange(updateLastStart);
 gui
   .add(state, "stagedDoorRotation")
   .name("door rotation (%)")
@@ -111,8 +103,10 @@ gui
   .listen()
   .onFinishChange((value: number) => {
     const angle = state.illustrationRotation.target.y;
-    const oldMs = (angle / (2 * Math.PI)) * state.durationInMs;
-    const newMs = Date.now() - (oldMs / state.durationInMs) * value;
+    const oldOffset = (angle / (2 * Math.PI)) * state.durationInMs;
+    const newOffset = (oldOffset / state.durationInMs) * value;
+    const direction = state.isReverse ? 1 : -1;
+    const newMs = Date.now() + direction * newOffset;
 
     state.durationInMs = value;
     state.lastStart = newMs;
@@ -121,6 +115,15 @@ gui
   .max(30_000)
   .step(1_000);
 gui.add(state, "reset").name("reset");
+
+function updateLastStart() {
+  const angle = state.illustrationRotation.target.y;
+  const offset = (angle / (2 * Math.PI)) * state.durationInMs;
+  const direction = state.isReverse ? 1 : -1;
+  const newMs = Date.now() + direction * offset;
+
+  state.lastStart = newMs;
+}
 
 // ==============================================================================
 // illustration
@@ -139,10 +142,7 @@ const illo = new Zdog.Illustration({
   onDragEnd() {
     state.isDragging = false;
 
-    const angle = state.illustrationRotation.target.y;
-    const newMs = Date.now() - (angle / (2 * Math.PI)) * state.durationInMs;
-
-    state.lastStart = newMs;
+    updateLastStart();
   },
 });
 
@@ -280,10 +280,11 @@ function animate() {
     const currentMilliseconds = Date.now() - state.lastStart;
     const animationProgress = currentMilliseconds / state.durationInMs;
     const angle = animationProgress * 2 * Math.PI;
+    const direction = state.isReverse ? -1 : 1;
 
     state.illustrationRotation.target = {
-      x: Math.sin(angle),
-      y: angle,
+      x: direction * Math.sin(angle),
+      y: direction * angle,
     };
   }
 
