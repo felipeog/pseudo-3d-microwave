@@ -26,7 +26,7 @@ const COLOR = {
 // state
 // ==============================================================================
 
-const gui = new GUI({ title: "pseudo 3d microwave" });
+const gui = new GUI({ title: "Pseudo 3D Microwave" });
 
 const state = {
   // non-gui
