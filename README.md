@@ -1,6 +1,6 @@
 # Pseudo 3D Microwave
 
-An interactive web visualization of a pseudo 3D microwave oven, built with TypeScript, Vite, and Zdog.
+An interactive web visualization of a pseudo 3D microwave oven.
 
 ## Features
 
