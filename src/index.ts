@@ -32,7 +32,6 @@ const state = {
   // non-gui
   isDragging: false,
   lastStart: Date.now(),
-  offset: 0,
   illustrationRotation: {
     current: { x: 0, y: 0 },
     target: { x: 0, y: 0 },
@@ -54,7 +53,6 @@ const state = {
   stagedDurationInMs: 10_000,
   reset() {
     state.lastStart = Date.now();
-    state.offset = 0;
 
     state.illustrationRotation.current.x = 0;
     state.illustrationRotation.current.y = 0;
@@ -80,8 +78,12 @@ gui
   .name("spin")
   .listen()
   .onChange(() => {
-    if (state.isSpinning) state.lastStart = Date.now();
-    if (!state.isSpinning) state.offset += Date.now() - state.lastStart;
+    if (!state.isSpinning) return;
+
+    const angle = state.illustrationRotation.target.y;
+    const newMs = Date.now() - (angle / (2 * Math.PI)) * state.durationInMs;
+
+    state.lastStart = newMs;
   });
 gui
   .add(state, "stagedDoorRotation")
@@ -114,7 +116,6 @@ gui
 
     state.durationInMs = value;
     state.lastStart = newMs;
-    state.offset = 0;
   })
   .min(1_000)
   .max(30_000)
@@ -130,7 +131,6 @@ const illo = new Zdog.Illustration({
   dragRotate: true,
   onDragStart() {
     state.isDragging = true;
-    if (state.isSpinning) state.offset += Date.now() - state.lastStart;
   },
   onDragMove() {
     state.isDragging = true;
@@ -138,7 +138,11 @@ const illo = new Zdog.Illustration({
   },
   onDragEnd() {
     state.isDragging = false;
-    if (state.isSpinning) state.lastStart = Date.now();
+
+    const angle = state.illustrationRotation.target.y;
+    const newMs = Date.now() - (angle / (2 * Math.PI)) * state.durationInMs;
+
+    state.lastStart = newMs;
   },
 });
 
@@ -273,8 +277,7 @@ new Zdog.Rect({
 function animate() {
   // illustration rotation
   if (state.isSpinning && !state.isDragging) {
-    const currentMilliseconds = Date.now() - state.lastStart + state.offset;
-    // console.log(currentMilliseconds)
+    const currentMilliseconds = Date.now() - state.lastStart;
     const animationProgress = currentMilliseconds / state.durationInMs;
     const angle = animationProgress * 2 * Math.PI;
 
@@ -326,6 +329,10 @@ window.addEventListener("load", () => {
 });
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") state.lastStart = Date.now();
-  else state.offset += Date.now() - state.lastStart;
+  if (document.visibilityState !== "visible") return;
+
+  const angle = state.illustrationRotation.target.y;
+  const newMs = Date.now() - (angle / (2 * Math.PI)) * state.durationInMs;
+
+  state.lastStart = newMs;
 });
