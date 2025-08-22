@@ -42,7 +42,8 @@ const illo = new Zdog.Illustration({
   },
   onDragMove() {
     state.isDragging = true;
-    state.illustrationRotation.target = { x: illo.rotate.x, y: illo.rotate.y };
+    state.illustrationRotation.target.x = illo.rotate.x;
+    state.illustrationRotation.target.y = illo.rotate.y;
   },
   onDragEnd() {
     state.isDragging = false;
@@ -167,12 +168,10 @@ const state = {
   // functions
   reset() {
     state.lastStart = Date.now();
-
     state.illustrationRotation.current.x = DEFAULT.ILLUSTRATION_ROTATION;
     state.illustrationRotation.current.y = DEFAULT.ILLUSTRATION_ROTATION;
     state.illustrationRotation.target.x = DEFAULT.ILLUSTRATION_ROTATION;
     state.illustrationRotation.target.y = DEFAULT.ILLUSTRATION_ROTATION;
-
     state.doorRotation = DEFAULT.DOOR_ROTATION;
     state.zoom = DEFAULT.ZOOM;
     state.durationInMs = DEFAULT.DURATION_IN_MS;
@@ -257,10 +256,8 @@ function resize() {
   const controlHeight = state.height;
   const buttonDiameter = controlWidth * (1 / 3);
   const buttonOffset = state.stroke * (1 / 2);
-
   const doorWidth = state.width - controlWidth;
   const doorHeight = state.height;
-
   const glassWidth = doorWidth * (3 / 4);
   const glassHeight = state.height * (2 / 3);
   const glassOffset = state.stroke * (1 / 2);
@@ -362,10 +359,11 @@ function animate() {
       state.illustrationRotation.current.y,
   };
 
-  state.illustrationRotation.current = {
-    x: state.illustrationRotation.current.x + illustrationDistance.x * 0.1,
-    y: state.illustrationRotation.current.y + illustrationDistance.y * 0.1,
-  };
+  state.illustrationRotation.current.x =
+    state.illustrationRotation.current.x + illustrationDistance.x * 0.1;
+  state.illustrationRotation.current.y =
+    state.illustrationRotation.current.y + illustrationDistance.y * 0.1;
+
   illo.rotate.x = state.illustrationRotation.current.x;
   illo.rotate.y = state.illustrationRotation.current.y;
 
@@ -390,7 +388,5 @@ window.addEventListener("load", () => {
 });
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState !== "visible") return;
-
-  updateLastStart();
+  if (document.visibilityState === "visible") updateLastStart();
 });
