@@ -69,6 +69,7 @@ const state = {
     state.durationInMs = 10_000;
     state.isSpinning = true;
     state.isReverse = false;
+
     state.stagedDoorRotation = 0.25;
     state.stagedZoom = 0.5;
     state.stagedDurationInMs = 10_000;
@@ -282,10 +283,8 @@ function animate() {
     const angle = animationProgress * 2 * Math.PI;
     const direction = state.isReverse ? -1 : 1;
 
-    state.illustrationRotation.target = {
-      x: direction * Math.sin(angle),
-      y: direction * angle,
-    };
+    state.illustrationRotation.target.x = direction * Math.sin(angle);
+    state.illustrationRotation.target.y = direction * angle;
   }
 
   const illustrationDistance = {
@@ -332,8 +331,5 @@ window.addEventListener("load", () => {
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState !== "visible") return;
 
-  const angle = state.illustrationRotation.target.y;
-  const newMs = Date.now() - (angle / (2 * Math.PI)) * state.durationInMs;
-
-  state.lastStart = newMs;
+  updateLastStart();
 });
