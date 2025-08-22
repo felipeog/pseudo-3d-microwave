@@ -9,10 +9,18 @@ import GUI from "lil-gui";
 const WIDTH = 200;
 const HEIGHT = 100;
 const DEPTH = 100;
-const STROKE = 10;
+
 const CONTROL_WIDTH = WIDTH * (1 / 5);
+const CONTROL_HEIGHT = HEIGHT;
+const BUTTON_DIAMETER = CONTROL_WIDTH * (1 / 4);
+
 const DOOR_WIDTH = WIDTH - CONTROL_WIDTH;
-const MAX_ZOOM = 2;
+const DOOR_HEIGHT = HEIGHT;
+
+const GLASS_WIDTH = DOOR_WIDTH * (3 / 4);
+const GLASS_HEIGHT = HEIGHT * (2 / 3);
+
+const STROKE = 10;
 const COLOR = {
   outsideLight: "#ffffff",
   outsideDark: "#dddddf",
@@ -21,6 +29,8 @@ const COLOR = {
   insideDark: "#99999f",
   darkDetails: "#00000f",
 };
+
+const MAX_ZOOM = 2;
 
 // ==============================================================================
 // state
@@ -165,10 +175,10 @@ new Zdog.Rect({
   fill: true,
   addTo: illo,
   width: WIDTH,
-  height: HEIGHT,
+  height: DEPTH,
   color: COLOR.insideLightest,
   backface: COLOR.outsideDark,
-  translate: { y: DEPTH * (1 / 2) },
+  translate: { y: HEIGHT * (1 / 2) },
   rotate: { x: Math.PI * (1 / 2) },
 });
 
@@ -178,10 +188,10 @@ new Zdog.Rect({
   fill: true,
   addTo: illo,
   width: WIDTH,
-  height: HEIGHT,
+  height: DEPTH,
   color: COLOR.outsideLight,
   backface: COLOR.insideDark,
-  translate: { y: -1 * DEPTH * (1 / 2) },
+  translate: { y: -1 * HEIGHT * (1 / 2) },
   rotate: { x: Math.PI * (1 / 2) },
 });
 
@@ -221,7 +231,7 @@ new Zdog.Rect({
   fill: true,
   addTo: controlPanelGroup,
   width: CONTROL_WIDTH,
-  height: HEIGHT,
+  height: CONTROL_HEIGHT,
   color: COLOR.outsideLight,
   backface: false,
 });
@@ -229,17 +239,19 @@ new Zdog.Rect({
 // control buttons
 new Zdog.Ellipse({
   addTo: controlPanelGroup,
-  diameter: 10,
-  stroke: 10,
+  diameter: BUTTON_DIAMETER,
+  stroke: STROKE,
+  fill: true,
   color: COLOR.darkDetails,
-  translate: { y: -1 * HEIGHT * (1 / 5), z: 5 },
+  translate: { y: -1 * CONTROL_HEIGHT * (1 / 5), z: 5 },
 });
 new Zdog.Ellipse({
   addTo: controlPanelGroup,
-  diameter: 10,
-  stroke: 10,
+  diameter: BUTTON_DIAMETER,
+  stroke: STROKE,
+  fill: true,
   color: COLOR.darkDetails,
-  translate: { y: HEIGHT * (1 / 5), z: 5 },
+  translate: { y: CONTROL_HEIGHT * (1 / 5), z: 5 },
 });
 
 // door panel
@@ -253,7 +265,7 @@ new Zdog.Rect({
   fill: true,
   addTo: doorPanelGroup,
   width: DOOR_WIDTH,
-  height: HEIGHT,
+  height: DOOR_HEIGHT,
   translate: { x: DOOR_WIDTH * (1 / 2) },
   color: COLOR.outsideLight,
   backface: COLOR.insideLightest,
@@ -266,8 +278,8 @@ new Zdog.Rect({
   backface: false,
   color: COLOR.darkDetails,
   addTo: doorPanelGroup,
-  width: DOOR_WIDTH - 40,
-  height: HEIGHT - 40,
+  width: GLASS_WIDTH,
+  height: GLASS_HEIGHT,
   translate: { x: DOOR_WIDTH * (1 / 2), z: 2 },
 });
 
