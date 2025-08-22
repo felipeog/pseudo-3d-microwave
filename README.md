@@ -5,7 +5,6 @@ An interactive web visualization of a pseudo 3D microwave oven.
 ## Features
 
 - 3D model of a microwave oven rendered in the browser
-- Interactive controls for spinning, zooming, and opening/closing the door
 - Real-time animation and GUI controls
 
 ## Technologies Used
